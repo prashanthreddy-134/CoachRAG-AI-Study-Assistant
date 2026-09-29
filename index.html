@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>CoachRAG — AI Study Assistant</title>
+
+    <meta
+        name="description"
+        content="CoachRAG is your personal AI study assistant for document-based learning, research, and revision."
+    >
+
+    <meta name="theme-color" content="#f7f8ff">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
+        rel="stylesheet"
+    >
+
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <div class="app">
+
+        <!-- SIDEBAR -->
+        <aside class="sidebar" id="sidebar">
+
+            <div class="brand">
+                <div class="brand-mark">✦</div>
+
+                <div class="brand-name">
+                    Coach<span>RAG</span>
+                </div>
+            </div>
+
+            <div class="sidebar-section">
+                <div class="nav-label">WORKSPACE</div>
+
+                <nav class="nav" aria-label="Main navigation">
+
+                    <button
+                        class="active"
+                        type="button"
+                        data-tab="Knowledge library"
+                        onclick="switchTab(this, 'Knowledge library')"
+                    >
+                        <span class="nav-icon">▤</span>
+                        <span>Knowledge library</span>
+                    </button>
+
+                    <button
+                        type="button"
+                        data-tab="Ask a question"
+                        onclick="switchTab(this, 'Ask a question')"
+                    >
+                        <span class="nav-icon">✦</span>
+                        <span>Ask a question</span>
+                    </button>
+
+                    <button
+                        type="button"
+                        data-tab="Source citations"
+                        onclick="switchTab(this, 'Source citations')"
+                    >
+                        <span class="nav-icon">⌕</span>
+                        <span>Source citations</span>
+                    </button>
+
+                    <button
+                        type="button"
+                        data-tab="Study sessions"
+                        onclick="switchTab(this, 'Study sessions')"
+                    >
+                        <span class="nav-icon">◷</span>
+                        <span>Study sessions</span>
+                    </button>
+
+                </nav>
+            </div>
+
+            <!-- SIDEBAR QUICK ACTIONS -->
+            <div class="sidebar-section sidebar-quick-actions">
+
+                <div class="nav-label">QUICK ACTIONS</div>
+
+                <button
+                    class="sidebar-action"
+                    type="button"
+                    id="sidebarUpload"
+                >
+                    <span>＋</span>
+                    Add documents
+                </button>
+
+                <button
+                    class="sidebar-action"
+                    type="button"
+                    id="exportButton"
+                >
+                    <span>⇩</span>
+                    Export backup
+                </button>
+
+            </div>
+
+            <!-- SIDEBAR STATUS -->
+            <div class="sidebar-status">
+
+                <div class="status-line">
+                    <span class="status-dot"></span>
+                    <span>Local AI assistant</span>
+                </div>
+
+                <div class="status-caption">
+                    Qwen 2.5 3B · Ollama
+                </div>
+
+                <div class="sidebar-document-count">
+                    <span>Documents</span>
+                    <strong id="sidebarDocumentCount">0</strong>
+                </div>
+
+            </div>
+
+        </aside>
+
+        <!-- MOBILE OVERLAY -->
+        <div
+            class="sidebar-overlay"
+            id="sidebarOverlay"
+            aria-hidden="true"
+        ></div>
+
+        <!-- MAIN AREA -->
+        <div class="main-wrapper">
+
+            <!-- TOPBAR -->
+            <header class="topbar">
+
+                <div class="topbar-left">
+
+                    <button
+                        class="menu-toggle"
+                        id="menuToggle"
+                        type="button"
+                        aria-label="Open navigation"
+                    >
+                        ☰
+                    </button>
+
+                    <div class="breadcrumb">
+                        <span>Workspace</span>
+                        <span class="breadcrumb-divider">/</span>
+                        <strong id="breadcrumbCurrent">
+                            Knowledge library
+                        </strong>
+                    </div>
+
+                </div>
+
+                <div class="topbar-right">
+
+                    <div
+                        class="connection-status"
+                        id="connectionStatus"
+                    >
+                        <span class="connection-dot"></span>
+                        <span id="connectionText">
+                            Checking AI connection...
+                        </span>
+                    </div>
+
+                    <button
+                        class="top-export-button"
+                        id="topExportButton"
+                        type="button"
+                        title="Export your data"
+                    >
+                        ⇩ <span>Export</span>
+                    </button>
+
+                </div>
+
+            </header>
+
+            <!-- PAGE CONTENT -->
+            <main class="main" id="mainContent">
+
+                <!-- JavaScript renders the active page here -->
+
+                <div class="initial-loading">
+                    <div class="loading-spinner"></div>
+                    <p>Loading CoachRAG...</p>
+                </div>
+
+            </main>
+
+            <!-- FOOTER -->
+            <footer class="app-footer">
+                <div>
+                    <span>✦</span>
+                    CoachRAG
+                    <span class="footer-divider">·</span>
+                    AI-powered learning workspace
+                </div>
+
+                <div class="footer-right">
+                    Local-first study assistant
+                </div>
+            </footer>
+
+        </div>
+
+    </div>
+
+    <!-- TOAST NOTIFICATIONS -->
+    <div
+        id="toast"
+        role="status"
+        aria-live="polite"
+    ></div>
+
+    <!-- MODAL ROOT -->
+    <div id="modalRoot"></div>
+
+    <!-- DOCX TEXT EXTRACTION -->
+    <script
+        src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.9.0/mammoth.browser.min.js"
+        defer
+    ></script>
+
+    <!-- PDF TEXT EXTRACTION -->
+    <script
+        src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"
+        defer
+    ></script>
+
+    <!-- COACHRAG APPLICATION -->
+    <script src="app.js" defer></script>
+
+</body>
+</html>
